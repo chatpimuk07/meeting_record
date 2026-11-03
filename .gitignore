@@ -16,3 +16,4 @@ work/
 db/
 incremental_db/
 output_files/
+esp32/
