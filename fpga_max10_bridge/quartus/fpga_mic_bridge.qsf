@@ -1,0 +1,79 @@
+# =========================================================================
+# Smart Meeting Recorder - FPGA Audio DSP Bridge (Quartus Prime Project)
+# Board  : Terasic DE10-Lite
+# Device : Intel MAX 10 - 10M50DAF484C7G
+# Top    : fpga_mic_bridge_top (VHDL - UART Mode Only)
+# =========================================================================
+set_global_assignment -name FAMILY "MAX 10"
+set_global_assignment -name DEVICE 10M50DAF484C7G
+set_global_assignment -name TOP_LEVEL_ENTITY fpga_mic_bridge_top
+set_global_assignment -name VHDL_INPUT_VERSION VHDL_1993
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
+set_global_assignment -name DEVICE_FILTER_PACKAGE FBGA
+set_global_assignment -name DEVICE_FILTER_PIN_COUNT 484
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "3.3-V LVTTL"
+
+# ---- VHDL Source Files (4 Files Only) ----
+set_global_assignment -name VHDL_FILE ../rtl/i2s_master_transceiver.vhd
+set_global_assignment -name VHDL_FILE ../rtl/audio_dsp_processor.vhd
+set_global_assignment -name VHDL_FILE ../rtl/uart_frame_tx.vhd
+set_global_assignment -name VHDL_FILE ../rtl/fpga_mic_bridge_top.vhd
+set_global_assignment -name SDC_FILE fpga_mic_bridge.sdc
+
+# ---- 50 MHz System Clock ----
+set_location_assignment PIN_P11 -to MAX10_CLK1_50
+
+# ---- Push Buttons (Active Low) ----
+set_location_assignment PIN_B8 -to KEY[0]
+set_location_assignment PIN_A7 -to KEY[1]
+set_instance_assignment -name IO_STANDARD "3.3 V SCHMITT TRIGGER" -to KEY[0]
+set_instance_assignment -name IO_STANDARD "3.3 V SCHMITT TRIGGER" -to KEY[1]
+
+# ---- Slide Switches ----
+set_location_assignment PIN_C10 -to SW[0]
+set_location_assignment PIN_C11 -to SW[1]
+set_location_assignment PIN_D12 -to SW[2]
+set_location_assignment PIN_C12 -to SW[3]
+set_location_assignment PIN_A12 -to SW[4]
+set_location_assignment PIN_B12 -to SW[5]
+set_location_assignment PIN_A13 -to SW[6]
+set_location_assignment PIN_A14 -to SW[7]
+set_location_assignment PIN_B14 -to SW[8]
+set_location_assignment PIN_F15 -to SW[9]
+
+# ---- Red LEDs (LEDR[0]=VAD, LEDR[1]=Clip, LEDR[9:2]=VU Meter) ----
+set_location_assignment PIN_A8  -to LEDR[0]
+set_location_assignment PIN_A9  -to LEDR[1]
+set_location_assignment PIN_A10 -to LEDR[2]
+set_location_assignment PIN_B10 -to LEDR[3]
+set_location_assignment PIN_D13 -to LEDR[4]
+set_location_assignment PIN_C13 -to LEDR[5]
+set_location_assignment PIN_E14 -to LEDR[6]
+set_location_assignment PIN_D14 -to LEDR[7]
+set_location_assignment PIN_A11 -to LEDR[8]
+set_location_assignment PIN_B11 -to LEDR[9]
+
+# ---- Arduino Header IO0..IO2 : INMP441 I2S Digital Microphone ----
+set_location_assignment PIN_AB5  -to MIC_I2S_WS
+set_location_assignment PIN_AB6  -to MIC_I2S_SCK
+set_location_assignment PIN_AB7  -to MIC_I2S_SD
+set_instance_assignment -name IO_STANDARD "3.3 V SCHMITT TRIGGER" -to MIC_I2S_SD
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to MIC_I2S_SD
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to MIC_I2S_SCK
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to MIC_I2S_WS
+set_instance_assignment -name SLEW_RATE 1 -to MIC_I2S_SCK
+set_instance_assignment -name SLEW_RATE 1 -to MIC_I2S_WS
+
+# ---- Arduino Header IO7 : 1 Mbps Framed UART TX to ESP32 (GPIO 16 / RX2) ----
+set_location_assignment PIN_AA12 -to FPGA_UART_TX
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to FPGA_UART_TX
+set_instance_assignment -name SLEW_RATE 1 -to FPGA_UART_TX
+
+# ---- Arduino Header IO8 : 8.000 kHz Oscilloscope Timing Probe ----
+set_location_assignment PIN_AB17 -to TIMING_DEBUG_PIN
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TIMING_DEBUG_PIN
+set_instance_assignment -name SLEW_RATE 1 -to TIMING_DEBUG_PIN
